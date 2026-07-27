@@ -58,6 +58,8 @@ GEM
     drb (2.2.3)
     erb (6.0.6)
     erubi (1.13.1)
+    faker (3.8.0)
+      i18n (>= 1.8.11, < 2)
     i18n (1.15.2)
       concurrent-ruby (~> 1.0)
     io-console (0.8.2)
@@ -206,6 +208,7 @@ PLATFORMS
 DEPENDENCIES
   activerecord (~> 7.1)
   database_cleaner (~> 2.0)
+  faker
   pry (~> 0.14.1)
   rake (~> 13.0)
   require_all (~> 3.0)

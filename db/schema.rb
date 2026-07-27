@@ -10,28 +10,33 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_07_22_152222) do
-  create_table "owners", force: :cascade do |t|
+ActiveRecord::Schema[7.2].define(version: 2026_07_27_163639) do
+  create_table "meal_plans", force: :cascade do |t|
     t.string "name", null: false
-    t.string "email", null: false
-    t.string "phone", null: false
-    t.text "address"
+    t.date "week_start"
+    t.string "goal"
+    t.float "budget"
+    t.bigint "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["email"], name: "index_owners_on_email", unique: true
   end
 
-  create_table "pets", force: :cascade do |t|
+  create_table "meals", force: :cascade do |t|
     t.string "name", null: false
-    t.string "species", null: false
-    t.string "breed", null: false
-    t.integer "age", null: false
-    t.text "notes"
-    t.integer "owner_id", null: false
+    t.string "meal_type"
+    t.integer "prep_time"
+    t.float "estimated_cost"
+    t.integer "calories"
+    t.boolean "prepared", default: false, null: false
+    t.boolean "favorite", default: false, null: false
+    t.bigint "meal_plan_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["owner_id"], name: "index_pets_on_owner_id"
   end
 
-  add_foreign_key "pets", "owners"
+  create_table "users", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 end
