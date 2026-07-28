@@ -1,4 +1,10 @@
+require "tty-prompt"
+
 class CLI
+  def initialize
+    @prompt = TTY::Prompt.new
+  end
+
   def run
     puts "Welcome to Meal Prep Tracker!"
     main_menu
@@ -67,7 +73,11 @@ class CLI
   def select_meal_plan(user)
     if user.meal_plans.any?
       user.meal_plans.each do |plan|
-        puts "  -> Meal Plan: #{plan.name} (ID: #{plan.id})"
+        puts "  -> Meal Plan: #{plan.name} 
+        (ID: #{plan.id}) 
+        (week_start: #{plan.week_start})
+        (goal: #{plan.goal}) 
+        (budget: #{plan.budget})"
       end
 
       print "Enter a meal plan ID to view meals: "
@@ -77,7 +87,13 @@ class CLI
 
       if selected_plan
         selected_plan.meals.each do |meal|
-          puts " -> Meal: #{meal.name} (ID: #{meal.id})"
+          puts " -> Meal: #{meal.name} (ID: #{meal.id}) 
+          (meal_type: #{meal.meal_type})
+          (prep_time: #{meal.prep_time})
+          (estimated_cost: #{meal.estimated_cost})
+          (calories: #{meal.calories})
+          (prepared: #{meal.prepared}
+          (favorite: #{meal.favorite})"
         end
 
         selected_plan
@@ -98,36 +114,14 @@ class CLI
     meal_plan = select_meal_plan(user)
     return unless meal_plan
 
-    puts "Which field do you want to change?"
-    puts "1. name"
-    puts "2. week_start"
-    puts "3. goal"
-    puts "4. budget"
-    print "Choose an option: "
+    field = @prompt.select("Which field do you want to change?", %w[name week_start goal budget])
 
-    choice = gets.chomp
-
-    field =
-      case choice
-      when "1" then "name"
-      when "2" then "week_start"
-      when "3" then "goal"
-      when "4" then "budget"
-      else
-        nil
-      end
-
-    puts "Current #{field}: #{meal_plan.send(field)}"
-    print "Enter new #{field}: "
-    new_value = gets.chomp
-    new_value = new_value.to_f if field == "budget"
-
-    meal_plan.update(field => new_value)
+    new_value = @prompt.ask("Enter a new value for #{field}:")
 
     if meal_plan.update(field.to_sym => new_value)
       puts "Success! Record updated in the database."
     else
-      puts "Update failed: #{user.errors.full_messages.join(', ')}"
+      puts "Update failed: #{meal_plan.errors.full_messages.join(', ')}"
     end
   end
 end

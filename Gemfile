@@ -18,6 +18,8 @@ gem "require_all", "~> 3.0"
 
 gem "standalone_migrations"
 
+gem "tty-prompt"
+
 # Generate mock data for database seeds
 gem "faker"
 
