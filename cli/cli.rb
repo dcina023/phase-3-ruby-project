@@ -52,7 +52,7 @@ class CLI
     print "Enter a user ID: "
     user_id = gets.chomp
 
-    user = User.includes(:meal_plans).find_by(id: user_id)
+    user = User.includes(meal_plans: :meals).find_by(id: user_id)
 
     if user
       puts "\nSelected user: #{user.name} (ID: #{user.id})"
@@ -60,6 +60,13 @@ class CLI
       if user.meal_plans.any?
         user.meal_plans.each do |plan|
           puts "  -> Meal Plan: #{plan.name} (ID: #{plan.id})"
+        end
+        print "Enter a meal plan ID to view meals:"
+        meal_plan_id = gets.chomp
+
+        selected_plan = user.meal_plans.find { |plan| plan.id == meal_plan_id.to_i }
+        selected_plan.meals.each do |meal|
+          puts " -> Meal: #{meal.name} (ID: #{meal.id})"
         end
       else
         puts "  -> No meal plans found."
