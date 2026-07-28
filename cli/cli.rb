@@ -36,7 +36,7 @@ class CLI
           display_meals(meal_plan) if meal_plan
         end
       when "3", "add user"
-        add_user
+        add_new_user
       when "4", "add mealplan"
         add_mealplan
       when "5", "update mealplan"
@@ -63,6 +63,20 @@ class CLI
   def list_users
     User.all.each do |user|
       puts "#{user.id}. #{user.name}"
+    end
+  end
+
+  def add_new_user
+    print "Add a new user:"
+    name = gets.chomp
+
+    confirmed = @prompt.yes?("Are you sure you want to add '#{name}'?")
+
+    if confirmed
+      user = User.create(name: name)
+      puts "Success! '#{user.name}' has been created."
+    else
+      puts "Adding user canceled."
     end
   end
 
