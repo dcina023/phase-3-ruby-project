@@ -2,6 +2,9 @@
 
 require_relative "../config/environment"
 require_relative "cli"
+require_relative "user_menu"
+require_relative "meal_plan_menu"
+require_relative "meal_menu"
 
 CLI.new.run
 
