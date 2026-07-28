@@ -1,23 +1,43 @@
-def select_meal_plan(user)
-  if user.meal_plans.empty?
-    puts "No meal plans found."
-    return nil
+class CLI
+  def select_meal_plan(user)
+    if user.meal_plans.empty?
+      puts "No meal plans found."
+      return nil
+    end
+
+    choices = user.meal_plans.map do |plan|
+      { name: "#{plan.name} (ID: #{plan.id})", value: plan }
+    end
+
+    meal_plan = @prompt.select("Select a meal plan:", choices)
+
+    puts "\nSelected Meal Plan:"
+    puts "  -> Meal Plan: #{meal_plan.name}"
+    puts "  -> ID: #{meal_plan.id}"
+    puts "  -> Week Start: #{meal_plan.week_start}"
+    puts "  -> Goal: #{meal_plan.goal}"
+    puts "  -> Budget: #{meal_plan.budget}"
+
+    meal_plan
   end
 
-  choices = user.meal_plans.map do |plan|
-    { name: "#{plan.name} (ID: #{plan.id})", value: plan }
+  def display_meal_plan_summary(meal_plan)
+    puts "\n#{meal_plan.name} Summary"
+    puts "Budget: $#{meal_plan.budget}"
+    puts "Estimated Cost: $#{meal_plan.total_estimated_cost}"
+    puts "Remaining Budget: $#{meal_plan.remaining_budget}"
+
+    favorite_meals = meal_plan.meals.where(favorite: true)
+
+    puts "\nFavorite Meals:"
+    if favorite_meals.any?
+      favorite_meals.each do |meal|
+        puts "- #{meal.name}"
+      end
+    else
+      puts "No favorite meals found."
+    end
   end
-
-  meal_plan = @prompt.select("Select a meal plan:", choices)
-
-  puts "\nSelected Meal Plan:"
-  puts "  -> Meal Plan: #{meal_plan.name}"
-  puts "  -> ID: #{meal_plan.id}"
-  puts "  -> Week Start: #{meal_plan.week_start}"
-  puts "  -> Goal: #{meal_plan.goal}"
-  puts "  -> Budget: #{meal_plan.budget}"
-
-  meal_plan
 end
 
 def add_new_meal_plan
