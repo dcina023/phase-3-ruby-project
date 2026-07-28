@@ -14,11 +14,14 @@ class CLI
     loop do
       puts "\n1. View users"
       puts "2. Select user"
-      puts "3 Update mealplan"
-      puts "4. Delete mealplan"
-      puts "5. Update meal"
-      puts "6. Delete meal"
-      puts "7 Exit"
+      puts "3 Add user"
+      puts "4. Add mealplan"
+      puts "5. Update mealplan"
+      puts "6. Delete mealplan"
+      puts "7. Add meal"
+      puts "8. Update meal"
+      puts "9. Delete meal"
+      puts "10 Exit"
       print "Choose an option: "
 
       choice = gets.chomp.downcase
@@ -32,17 +35,23 @@ class CLI
           meal_plan = select_meal_plan(user)
           display_meals(meal_plan) if meal_plan
         end
-      when "3", "update mealplan"
+      when "3", "add user"
+        add_user
+      when "4", "add mealplan"
+        add_mealplan
+      when "5", "update mealplan"
         update_mealplan
-      when "4", "delete mealplan"
+      when "6", "delete mealplan"
         user = select_user
         delete_mealplan(user) if user
-      when "5", "update meal"
+      when "7", "add meal"
+        add_meal
+      when "8", "update meal"
         update_meal
-      when "6", "delete meal"
+      when "9", "delete meal"
         user = select_user
         delete_meal(user) if user
-      when "7", "exit"
+      when "10", "exit"
         puts "Goodbye!"
         break
       else
