@@ -45,7 +45,7 @@ class CLI
         user = select_user
         delete_mealplan(user) if user
       when "7", "add meal"
-        add_meal
+        add_new_meal
       when "8", "update meal"
         update_meal
       when "9", "delete meal"
@@ -164,6 +164,48 @@ class CLI
       puts "No meals found for this meal plan."
     end
   end
+
+ def add_new_meal
+  user = select_user
+  return unless user
+
+  meal_plan = select_meal_plan(user)
+  return unless meal_plan
+
+  print "Meal name: "
+  name = gets.chomp
+
+  print "Meal type: "
+  meal_type = gets.chomp
+
+  print "Prep time: "
+  prep_time = gets.chomp.to_i
+
+  print "Estimated Cost: "
+  estimated_cost = gets.chomp.to_f
+
+  print "Calories: "
+  calories = gets.chomp.to_i
+
+  favorite = @prompt.yes?("Favorite?")
+
+  confirmed = @prompt.yes?("Are you sure you want to add '#{name}' meal to #{meal_plan.name}?")
+
+  if confirmed
+    new_meal = meal_plan.meals.create(
+      name: name,
+      meal_type: meal_type,
+      prep_time: prep_time,
+      estimated_cost: estimated_cost,
+      calories: calories,
+      favorite: favorite
+    )
+
+    puts "Success! '#{new_meal.name}' has been created."
+  else
+    puts "Adding meal canceled."
+  end
+end
 
   def update_mealplan
     user = select_user
