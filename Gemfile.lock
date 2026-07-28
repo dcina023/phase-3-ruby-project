@@ -97,6 +97,8 @@ GEM
     parser (3.3.11.1)
       ast (~> 2.4.1)
       racc
+    pastel (0.8.0)
+      tty-color (~> 0.5)
     pp (0.6.4)
       prettyprint
     prettyprint (0.2.0)
@@ -189,12 +191,23 @@ GEM
     thor (1.5.0)
     timeout (0.6.1)
     tsort (0.2.0)
+    tty-color (0.6.0)
+    tty-cursor (0.7.1)
+    tty-prompt (0.23.1)
+      pastel (~> 0.8)
+      tty-reader (~> 0.8)
+    tty-reader (0.9.0)
+      tty-cursor (~> 0.7)
+      tty-screen (~> 0.8)
+      wisper (~> 2.0)
+    tty-screen (0.8.2)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode-display_width (3.2.0)
       unicode-emoji (~> 4.1)
     unicode-emoji (4.2.0)
     useragent (0.16.11)
+    wisper (2.0.1)
     zeitwerk (2.8.2)
 
 PLATFORMS
@@ -216,6 +229,7 @@ DEPENDENCIES
   rubocop
   sqlite3 (~> 1.7)
   standalone_migrations
+  tty-prompt
 
 BUNDLED WITH
    2.7.2
