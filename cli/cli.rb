@@ -33,7 +33,8 @@ class CLI
       when "3", "update mealplan"
         update_mealplan
       when "4", "delete mealplan"
-        delete_mealplan
+        user = select_user
+        delete_mealplan(user) if user
       when "5", "add meal"
         add_meal
       when "6", "update meal"
@@ -73,10 +74,10 @@ class CLI
   def select_meal_plan(user)
     if user.meal_plans.any?
       user.meal_plans.each do |plan|
-        puts "  -> Meal Plan: #{plan.name} 
-        (ID: #{plan.id}) 
+        puts "  -> Meal Plan: #{plan.name}
+        (ID: #{plan.id})
         (week_start: #{plan.week_start})
-        (goal: #{plan.goal}) 
+        (goal: #{plan.goal})
         (budget: #{plan.budget})"
       end
 
@@ -87,7 +88,7 @@ class CLI
 
       if selected_plan
         selected_plan.meals.each do |meal|
-          puts " -> Meal: #{meal.name} (ID: #{meal.id}) 
+          puts " -> Meal: #{meal.name} (ID: #{meal.id})
           (meal_type: #{meal.meal_type})
           (prep_time: #{meal.prep_time})
           (estimated_cost: #{meal.estimated_cost})
@@ -122,6 +123,30 @@ class CLI
       puts "Success! Record updated in the database."
     else
       puts "Update failed: #{meal_plan.errors.full_messages.join(', ')}"
+    end
+  end
+
+  def delete_mealplan(user)
+    user_plans = user.meal_plans
+
+    if user_plans.empty?
+      puts "\nYou don't have any meal plans to delete"
+      return
+    end
+
+    choices = user_plans.map do |plan|
+      { name: "Plan ##{plan.id}: #{plan.name}", value: plan }
+    end
+
+    selected_plan = @prompt.select("\nSelect a meal plan to delete:", choices)
+
+    confirmed = @prompt.yes?("Are you absolutely sure you want to delete? '#{selected_plan.name}'?")
+
+    if confirmed
+      selected_plan.destroy
+      puts "Success! '{selected_plan.name}' has been deleted."
+    else
+      puts "Deletion canceled."
     end
   end
 end
