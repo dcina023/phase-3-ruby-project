@@ -1,6 +1,9 @@
 #!/usr/bin/env ruby
 
 require_relative "../config/environment"
+require_relative "cli"
+
+CLI.new.run
 
 # TODO: Build your CLI application here!
 #
