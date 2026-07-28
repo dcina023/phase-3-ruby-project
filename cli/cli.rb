@@ -52,12 +52,24 @@ class CLI
     print "Enter a user ID: "
     user_id = gets.chomp
 
-    user = User.find_by(id: user_id)
+    user = User.includes(:meal_plans).find_by(id: user_id)
 
     if user
-      puts "Selected user: #{user.name}"
+      puts "\nSelected user: #{user.name} (ID: #{user.id})"
+
+      if user.meal_plans.any?
+        user.meal_plans.each do |plan|
+          puts "  -> Meal Plan: #{plan.name} (ID: #{plan.id})"
+        end
+      else
+        puts "  -> No meal plans found."
+      end
+      puts "-" * 40
+
+      user
     else
       puts "User not found."
+      nil
     end
   end
 end
