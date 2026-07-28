@@ -16,10 +16,9 @@ class CLI
       puts "2. Select user"
       puts "3 Update mealplan"
       puts "4. Delete mealplan"
-      puts "5. Add meal"
-      puts "6. Update meal"
-      puts "7. Delete meal"
-      puts "8 Exit"
+      puts "5. Update meal"
+      puts "6. Delete meal"
+      puts "7 Exit"
       print "Choose an option: "
 
       choice = gets.chomp.downcase
@@ -35,13 +34,11 @@ class CLI
       when "4", "delete mealplan"
         user = select_user
         delete_mealplan(user) if user
-      when "5", "add meal"
-        add_meal
-      when "6", "update meal"
+      when "5", "update meal"
         update_meal
-      when "7", "delete meal"
+      when "6", "delete meal"
         delete_meal
-      when "8", "exit"
+      when "7", "exit"
         puts "Goodbye!"
         break
       else
@@ -57,10 +54,10 @@ class CLI
   end
 
   def select_user
-    print "Enter a user ID: "
-    user_id = gets.chomp
+    print "Enter a user's name: "
+    user_name = gets.chomp
 
-    user = User.includes(meal_plans: :meals).find_by(id: user_id)
+    user = User.includes(meal_plans: :meals).find_by(name: user_name)
 
     if user
       puts "\nSelected user: #{user.name} (ID: #{user.id})"
@@ -81,29 +78,51 @@ class CLI
         (budget: #{plan.budget})"
       end
 
-      print "Enter a meal plan ID to view meals: "
+      print "Enter a meal plan ID: "
       meal_plan_id = gets.chomp
 
-      selected_plan = user.meal_plans.find { |plan| plan.id == meal_plan_id.to_i }
+      meal_plan = user.meal_plans.find { |plan| plan.id == meal_plan_id.to_i }
 
-      if selected_plan
-        selected_plan.meals.each do |meal|
-          puts " -> Meal: #{meal.name} (ID: #{meal.id})
+      if meal_plan
+        meal_plan
+      else
+        puts "Meal plan not found."
+        nil
+      end
+    else
+      puts "No meal plans found."
+      nil
+    end
+  end
+
+  def display_meals(meal_plan)
+    if meal_plan.meals.any?
+      meal_plan.meals.each do |meal|
+        puts "  -> Meal: #{meal.name} (ID: #{meal.id})
           (meal_type: #{meal.meal_type})
           (prep_time: #{meal.prep_time})
           (estimated_cost: #{meal.estimated_cost})
           (calories: #{meal.calories})
           (prepared: #{meal.prepared}
           (favorite: #{meal.favorite})"
-        end
-
-        selected_plan
-      else
-        puts "Meal plan not found."
-        nil
       end
     else
-      puts "  -> No meal plans found."
+      puts "No meals found for this meal plan."
+    end
+  end
+
+  def select_meal(meal_plan)
+    display_meals(meal_plan)
+
+    print "Enter a meal ID: "
+    meal_id = gets.chomp
+
+    meal = meal_plan.meals.find { |m| m.id == meal_id.to_i }
+
+    if meal
+      meal
+    else
+      puts "Meal not found."
       nil
     end
   end
@@ -147,6 +166,25 @@ class CLI
       puts "Success! '{selected_plan.name}' has been deleted."
     else
       puts "Deletion canceled."
+    end
+  end
+
+  def update_meal
+    user = select_user
+    return unless user
+
+    meal = select_meal(meal_plan)
+    return unless meal
+
+    field = @prompt.select("Which field do you want to change?",
+                           %w[name meal_type prep_time estimated_cost calories prepared favorite])
+
+    new_value = @prompt.ask("Enter a new value for #{field}:")
+
+    if meal.update(field.to_sym => new_value)
+      puts "Success! Record updated in the database."
+    else
+      puts "Update failed: #{meal.errors.full_messages.join(', ')}"
     end
   end
 end
