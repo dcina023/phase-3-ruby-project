@@ -1,4 +1,3 @@
-
 require "tty-prompt"
 
 class CLI
@@ -29,7 +28,10 @@ class CLI
         list_users
       when "2", "select"
         user = select_user
-        select_meal_plan(user) if user
+        if user
+          meal_plan = select_meal_plan(user)
+          display_meals(meal_plan) if meal_plan
+        end
       when "3", "update mealplan"
         update_mealplan
       when "4", "delete mealplan"
@@ -38,7 +40,8 @@ class CLI
       when "5", "update meal"
         update_meal
       when "6", "delete meal"
-        delete_meal
+        user = select_user
+        delete_meal(user) if user
       when "7", "exit"
         puts "Goodbye!"
         break
@@ -70,30 +73,25 @@ class CLI
   end
 
   def select_meal_plan(user)
-    if user.meal_plans.any?
-      user.meal_plans.each do |plan|
-        puts "  -> Meal Plan: #{plan.name}
-        (ID: #{plan.id})
-        (week_start: #{plan.week_start})
-        (goal: #{plan.goal})
-        (budget: #{plan.budget})"
-      end
-
-      print "Enter a meal plan ID: "
-      meal_plan_id = gets.chomp
-
-      meal_plan = user.meal_plans.find { |plan| plan.id == meal_plan_id.to_i }
-
-      if meal_plan
-        meal_plan
-      else
-        puts "Meal plan not found."
-        nil
-      end
-    else
+    if user.meal_plans.empty?
       puts "No meal plans found."
-      nil
+      return nil
     end
+
+    choices = user.meal_plans.map do |plan|
+      { name: "#{plan.name} (ID: #{plan.id})", value: plan }
+    end
+
+    meal_plan = @prompt.select("Select a meal plan:", choices)
+
+    puts "\nSelected Meal Plan:"
+    puts "  -> Meal Plan: #{meal_plan.name}"
+    puts "  -> ID: #{meal_plan.id}"
+    puts "  -> Week Start: #{meal_plan.week_start}"
+    puts "  -> Goal: #{meal_plan.goal}"
+    puts "  -> Budget: #{meal_plan.budget}"
+
+    meal_plan
   end
 
   def display_meals(meal_plan)
@@ -174,6 +172,9 @@ class CLI
     user = select_user
     return unless user
 
+    meal_plan = select_meal_plan(user)
+    return unless meal_plan
+
     meal = select_meal(meal_plan)
     return unless meal
 
@@ -186,6 +187,30 @@ class CLI
       puts "Success! Record updated in the database."
     else
       puts "Update failed: #{meal.errors.full_messages.join(', ')}"
+    end
+  end
+
+  def delete_meal(user)
+    user_meals = user.meals
+
+    if user_meals.empty?
+      puts "\nYou don't have any meals to delete"
+      return
+    end
+
+    choices = user_meals.map do |meal|
+      { name: "Meal ##{meal.id}: #{meal.name}", value: meal }
+    end
+
+    selected_meal = @prompt.select("\nSelect a meal to delete:", choices)
+
+    confirmed = @prompt.yes?("Are you absolutely sure you want to delete? '#{user_meals.name}'?")
+
+    if confirmed
+      selected_meal.destroy
+      puts "Success! '{selected_meal.name}' has been deleted."
+    else
+      puts "Deletion canceled."
     end
   end
 end
