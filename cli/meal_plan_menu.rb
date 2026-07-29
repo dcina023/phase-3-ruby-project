@@ -64,46 +64,55 @@ class Main
   end
 
   def add_new_meal_plan(user)
-    name = prompt_required_text("Meal plan name")
-    week_start = prompt_date("Week start date")
-    goal = prompt_required_text("Goal")
-    budget = prompt_float("Budget")
+    catch(:back) do
+      name = prompt_required_text("Meal plan name")
+      week_start = prompt_date("Week start date (or type back to return to menu)")
+      goal = prompt_required_text("Goal")
+      budget = prompt_float("Budget")
 
-    confirmed = @prompt.yes?("Are you sure you want to add '#{name}' meal plan for #{user.name}?")
+      confirmed = @prompt.yes?("Are you sure you want to add '#{name}' meal plan for #{user.name}?")
 
-    if confirmed
-      new_meal_plan = user.meal_plans.create(
-        name: name,
-        week_start: week_start,
-        goal: goal,
-        budget: budget
-      )
+      if confirmed
+        new_meal_plan = user.meal_plans.create(
+          name: name,
+          week_start: week_start,
+          goal: goal,
+          budget: budget
+        )
 
-      puts "Success! '#{new_meal_plan.name}' has been created."
-    else
-      puts "Adding meal plan canceled."
+        puts "Success! '#{new_meal_plan.name}' has been created."
+      else
+        puts "Adding meal plan canceled."
+      end
+      return
     end
+    puts "\nReturning to the previous menu..."
   end
 
   def update_meal_plan(meal_plan)
+    catch(:back) do
+      field = @prompt.select("Which field do you want to change?", %w[name week_start goal budget])
 
-    field = @prompt.select("Which field do you want to change?", %w[name week_start goal budget])
+      new_value =
+        case field
+        when "name", "goal"
+          prompt_required_text("Enter a new value for #{field}")
+        when "week_start"
+          prompt_date("Enter a new week start or type back to return to menu")
+        when "budget"
+          prompt_float("Enter a new value for #{field}")
+        end
 
-    new_value =
-      case field
-      when "name", "goal"
-        prompt_required_text("Enter a new value for #{field}")
-      when "week_start"
-        prompt_date("Enter a new week start")
-      when "budget"
-        prompt_float("Enter a new value for #{field}")
+      if meal_plan.update(field.to_sym => new_value)
+        puts "Success! Record updated in the database."
+      else
+        puts "Update failed: #{meal_plan.errors.full_messages.join(', ')}"
       end
 
-    if meal_plan.update(field.to_sym => new_value)
-      puts "Success! Record updated in the database."
-    else
-      puts "Update failed: #{meal.errors.full_messages.join(', ')}"
+      return
     end
+
+    puts "\nReturning to the previous menu..."
   end
 
   def delete_meal_plan(meal_plan)
