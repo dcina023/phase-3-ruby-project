@@ -45,6 +45,11 @@ class Main
     meal_type = prompt_required_text("Meal type")
     prep_time = prompt_prep_time
     estimated_cost = prompt_float("Estimated cost")
+    unless meal_plan.within_budget?(estimated_cost)
+      puts "This meal would put the meal plan over budget."
+      puts "Remaining budget: $#{meal_plan.remaining_budget}"
+      return
+    end
     calories = prompt_integer("Calories")
     favorite = prompt_boolean("Favorite?")
 
@@ -87,7 +92,10 @@ class Main
     return unless meal
 
     field = @prompt.select("Which field do you want to change?",
-                           %w[name meal_type prep_time estimated_cost calories prepared favorite])
+                           %w[name meal_type prep_time estimated_cost calories prepared favorite
+                              back])
+
+    return if field == "back"
 
     new_value =
       case field
@@ -100,7 +108,7 @@ class Main
       when "estimated_cost"
         prompt_float("Enter a new value for #{field}")
       when "prepared", "favorite"
-        @prompt.yes?("#{field.capitalize}?")
+        prompt_boolean
       end
 
     if meal.update(field.to_sym => new_value)

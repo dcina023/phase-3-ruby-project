@@ -4,6 +4,7 @@ class Main
       print "#{prompt_text}: "
       input = gets.chomp.strip
 
+      throw(:back) if input.downcase == "back"
       return input unless input.empty?
 
       puts "Input cannot be blank."
@@ -11,21 +12,23 @@ class Main
   end
 
   def prompt_required_text(prompt_text)
-    loop do
-      print "#{prompt_text}: "
-      input = gets.chomp.strip
+  loop do
+    print "#{prompt_text} or type 'back': "
+    input = gets.chomp.strip
 
-      return input if input.match?(/[a-zA-Z]/)
+    throw(:back) if input.downcase == "back"
+    return input if input.match?(/[a-zA-Z]/)
 
-      puts "Input cannot be blank and must include text."
-    end
+    puts "Input cannot be blank and must include text."
   end
+end
 
   def prompt_integer(prompt_text)
     loop do
       print "#{prompt_text}: "
       input = gets.chomp.strip
 
+      throw(:back) if input.downcase == "back"
       return input.to_i if input.match?(/^\d+$/)
 
       puts "Invalid input. Please enter a whole number."
@@ -37,6 +40,7 @@ class Main
       print "#{prompt_text}: "
       input = gets.chomp.strip
 
+      throw(:back) if input.downcase == "back"
       return input.to_f if input.match?(/^\d+(\.\d+)?$/)
 
       puts "Invalid input. Please enter a valid number."
@@ -70,6 +74,7 @@ class Main
       print "#{prompt_text} (MM/DD/YYYY): "
       input = gets.chomp.strip
 
+      throw(:back) if input.downcase == "back"
       return input if input.match?(%r{^\d{2}/\d{2}/\d{4}$})
 
       puts "Invalid date format. Please enter date as MM/DD/YYYY"
