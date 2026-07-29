@@ -12,47 +12,29 @@ class CLI
 
   def main_menu
     loop do
-      puts "\n1. View users"
-      puts "2. Select user"
-      puts "3. Add user"
-      puts "4. Add mealplan"
-      puts "5. Update mealplan"
-      puts "6. Delete mealplan"
-      puts "7. Add meal"
-      puts "8. Update meal"
-      puts "9. Delete meal"
-      puts "10. Exit"
-      print "Choose an option: "
-
-      choice = gets.chomp.downcase
+      puts "----------------------------
+---------------------------- "
+      choice = @prompt.select("Main Menu", [
+                                { name: "View users", value: :view_users },
+                                { name: "Select user", value: :select_user },
+                                { name: "Add user", value: :add_user },
+                                { name: "Delete user", value: :delete_user },
+                                { name: "Exit", value: :exit },
+                              ])
 
       case choice
-      when "1", "view user"
+      when :view_users
         list_users
-      when "2", "select user"
+      when :select_user
         user = select_user
         user_menu(user) if user
-      when "3", "add user"
+      when :add_user
         add_new_user
-      when "4", "add mealplan"
-        add_new_meal_plan
-      when "5", "update mealplan"
-        update_mealplan
-      when "6", "delete mealplan"
-        user = select_user
-        delete_mealplan(user) if user
-      when "7", "add meal"
-        add_new_meal
-      when "8", "update meal"
-        update_meal
-      when "9", "delete meal"
-        user = select_user
-        delete_meal(user) if user
-      when "10", "exit"
-        puts "Goodbye!"
+      when :delete_user
+        delete_user
+      when :exit
+        puts "Thank you for using Meal Plan Tracker!"
         break
-      else
-        puts "Invalid choice, try again."
       end
     end
   end
