@@ -1,26 +1,48 @@
 #!/usr/bin/env ruby
-
 require_relative "../config/environment"
-require_relative "cli"
+require_relative "input_helpers"
 require_relative "user_menu"
 require_relative "meal_plan_menu"
 require_relative "meal_menu"
+require "tty-prompt"
 
-CLI.new.run
+class Main
+  def initialize
+    @prompt = TTY::Prompt.new
+  end
 
-# TODO: Build your CLI application here!
-#
-# Requirements:
-# - Be object-oriented (at least two classes)
-# - Query and update the database directly via Active Record models
-# - Parse and display records in a readable format
-# - Accept user input and use it to create, update, and delete records
-# - Use a loop or menu interface
-# - Include current value prompts for updates (e.g. show the current value
-#   before asking the user what they want to change it to)
+  def run
+    puts "Welcome to Meal Prep Tracker!"
+    main_menu
+  end
 
-puts "Welcome to your CLI Application!"
-puts
+  def main_menu
+    loop do
+      puts "---------------------------- ---------------------------- "
+      choice = @prompt.select("Main Menu", [
+                                { name: "View users", value: :view_users },
+                                { name: "Select user", value: :select_user },
+                                { name: "Add user", value: :add_user },
+                                { name: "Delete user", value: :delete_user },
+                                { name: "Exit", value: :exit },
+                              ])
 
-# TODO: Implement your CLI functionality here
-puts "TODO: Build your CLI application"
+      case choice
+      when :view_users
+        list_users
+      when :select_user
+        user = select_user
+        user_menu(user) if user
+      when :add_user
+        add_new_user
+      when :delete_user
+        delete_user
+      when :exit
+        puts "Thank you for using Meal Plan Tracker!"
+        break
+      end
+    end
+  end
+end
+
+Main.new.run
