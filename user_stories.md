@@ -2,7 +2,7 @@
 
 ## Description: 
 
-### Meal Prep Tracker is a Ruby backend application built with ActiveRecord that supports creating, updating, and deleting weekly meal plans, organizing meals within those plans, and managing meal data for individual users. 
+- Meal Prep Tracker is a Ruby backend application built with ActiveRecord that supports creating, updating, and deleting weekly meal plans, organizing meals within those plans, and managing meal data for individual users. 
 
 ## Models:
  
