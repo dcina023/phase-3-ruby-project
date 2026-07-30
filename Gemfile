@@ -20,6 +20,10 @@ gem "standalone_migrations"
 
 gem "tty-prompt"
 
+gem "tty-font"
+
+gem "pastel"
+
 # Generate mock data for database seeds
 gem "faker"
 

@@ -1,4 +1,4 @@
-class Main
+class CLI
   def meal_plan_menu(user)
     loop do
       choice = @prompt.select("Update meal plans for #{user.name}", [
@@ -29,7 +29,7 @@ class Main
     puts "Estimated Cost: $#{meal_plan.total_estimated_cost}"
     puts "Remaining Budget: $#{meal_plan.remaining_budget}"
 
-    favorite_meals = meal_plan.meals.where(favorite: true)
+   favorite_meals(meal_plan)
 
     puts "\nFavorite Meals:"
     if favorite_meals.any?
@@ -91,14 +91,17 @@ class Main
 
   def update_meal_plan(meal_plan)
     catch(:back) do
-      field = @prompt.select("Which field do you want to change?", %w[name week_start goal budget])
+      field = @prompt.select("Which field do you want to change?",
+                             %w[name week_start goal budget back])
+
+      return if field == "back"
 
       new_value =
         case field
         when "name", "goal"
           prompt_required_text("Enter a new value for #{field}")
         when "week_start"
-          prompt_date("Enter a new week start or type back to return to menu")
+          prompt_date("Enter a new week start (or type back to return to menu)")
         when "budget"
           prompt_float("Enter a new value for #{field}")
         end

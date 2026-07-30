@@ -1,7 +1,7 @@
-class Main
+class CLI
   def prompt_required(prompt_text)
     loop do
-      print "#{prompt_text}: "
+      print "#{prompt_text} (or type 'back'): "
       input = gets.chomp.strip
 
       throw(:back) if input.downcase == "back"
@@ -12,20 +12,20 @@ class Main
   end
 
   def prompt_required_text(prompt_text)
-  loop do
-    print "#{prompt_text} or type 'back': "
-    input = gets.chomp.strip
+    loop do
+      print "#{prompt_text} (or type 'back'): "
+      input = gets.chomp.strip
 
-    throw(:back) if input.downcase == "back"
-    return input if input.match?(/[a-zA-Z]/)
+      throw(:back) if input.downcase == "back"
+      return input if input.match?(/[a-zA-Z]/)
 
-    puts "Input cannot be blank and must include text."
+      puts "Input cannot be blank and must include text."
+    end
   end
-end
 
   def prompt_integer(prompt_text)
     loop do
-      print "#{prompt_text}: "
+      print "#{prompt_text} (or type 'back'): "
       input = gets.chomp.strip
 
       throw(:back) if input.downcase == "back"
@@ -37,7 +37,7 @@ end
 
   def prompt_float(prompt_text)
     loop do
-      print "#{prompt_text}: "
+      print "#{prompt_text} (or type 'back'): "
       input = gets.chomp.strip
 
       throw(:back) if input.downcase == "back"
@@ -71,7 +71,7 @@ end
 
   def prompt_date(prompt_text)
     loop do
-      print "#{prompt_text} (MM/DD/YYYY): "
+      print "#{prompt_text} (or type 'back') (MM/DD/YYYY): "
       input = gets.chomp.strip
 
       throw(:back) if input.downcase == "back"
@@ -79,5 +79,19 @@ end
 
       puts "Invalid date format. Please enter date as MM/DD/YYYY"
     end
+  end
+
+  def find_user_by_name(name)
+    User.includes(meal_plans: :meals)
+        .where("LOWER(name) = ?", name.downcase)
+        .first
+  end
+
+  def display_selected_user(user)
+    puts "\nSelected user: #{user.name} (ID: #{user.id})"
+  end
+
+  def confirm_action(message)
+    @prompt.yes?(message)
   end
 end
