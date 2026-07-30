@@ -91,7 +91,10 @@ class CLI
 
   def update_meal_plan(meal_plan)
     catch(:back) do
-      field = @prompt.select("Which field do you want to change?", %w[name week_start goal budget])
+      field = @prompt.select("Which field do you want to change?",
+                             %w[name week_start goal budget back])
+
+      return if field == "back"
 
       new_value =
         case field

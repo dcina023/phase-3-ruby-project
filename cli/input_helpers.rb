@@ -1,7 +1,7 @@
 class CLI
   def prompt_required(prompt_text)
     loop do
-      print "#{prompt_text}: "
+      print "#{prompt_text} (or type 'back'): "
       input = gets.chomp.strip
 
       throw(:back) if input.downcase == "back"
@@ -13,7 +13,7 @@ class CLI
 
   def prompt_required_text(prompt_text)
     loop do
-      print "#{prompt_text} or type 'back': "
+      print "#{prompt_text} (or type 'back'): "
       input = gets.chomp.strip
 
       throw(:back) if input.downcase == "back"
@@ -25,7 +25,7 @@ class CLI
 
   def prompt_integer(prompt_text)
     loop do
-      print "#{prompt_text}: "
+      print "#{prompt_text} (or type 'back'): "
       input = gets.chomp.strip
 
       throw(:back) if input.downcase == "back"
@@ -37,7 +37,7 @@ class CLI
 
   def prompt_float(prompt_text)
     loop do
-      print "#{prompt_text}: "
+      print "#{prompt_text} (or type 'back'): "
       input = gets.chomp.strip
 
       throw(:back) if input.downcase == "back"
@@ -71,7 +71,7 @@ class CLI
 
   def prompt_date(prompt_text)
     loop do
-      print "#{prompt_text} (MM/DD/YYYY): "
+      print "#{prompt_text} (or type 'back') (MM/DD/YYYY): "
       input = gets.chomp.strip
 
       throw(:back) if input.downcase == "back"
