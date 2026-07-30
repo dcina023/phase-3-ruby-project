@@ -1,31 +1,72 @@
-# Meal Prep Tracker 
+# Meal Prep Tracker
 
-## Description: 
+Meal Prep Tracker is a Ruby CLI application built with ActiveRecord and SQLite3. The app allows users to create and manage meal plans, add meals to meal plans, update meal information, delete records, and view meal plan budget summaries from the terminal.
 
-### Meal Prep Tracker is a Ruby backend application built with ActiveRecord that supports creating, updating, and deleting weekly meal plans, organizing meals within those plans, and managing meal data for individual users. 
+## Requirements
 
-## Models:
- 
- - User
- - MealPlan
- - Meal
+Before running the application, make sure you have:
 
-## Associations:
+- Ruby installed
+- Bundler installed
+- SQLite3 installed
 
-- A User has many MealPlans.
-- A User has many Meals through MealPlans. 
-- A MealPlan belongs to a User.
-- A MealPlan has many Meals.
-- A Meal belongs to a MealPlan.
+## Installation
 
-## User Stories
+Clone the repository from GitHub:
 
-- View existing users.
-- View a user's meal plans.
-- Create a new meal plan for a user.
-- Update an existing meal plan.
-- Delete a meal plan.
-- Add meals to a meal plan.
-- Update meal information.
-- Remove meals from a meal plan.
-- View all meals within a meal plan.
+    git clone <your-repo-url>
+
+Move into the project directory:
+
+    cd <repo-folder-name>
+
+Install the project dependencies:
+
+    bundle install
+
+## Database Setup
+
+Create the database:
+
+    bundle exec rake db:create
+
+Run the migrations to create the database tables:
+
+    bundle exec rake db:migrate
+
+Seed the database with sample data:
+
+    bundle exec rake seed
+
+## Running the Application
+
+Start the CLI from the project root:
+
+    ruby cli/cli.rb
+
+## Useful Development Commands
+
+Open a Pry console with the application environment loaded:
+
+    bundle exec rake console
+
+Create a new migration:
+
+    bundle exec rake db:new_migration name=migration_name
+
+Example:
+
+    bundle exec rake db:new_migration name=create_users
+
+## Main Features
+
+The CLI supports:
+
+- Viewing users
+- Selecting a user
+- Adding and deleting users
+- Viewing a user’s meal plans and meals
+- Adding, updating, and deleting meal plans
+- Adding, updating, and deleting meals
+- Viewing meal plan budget summaries
+- Preventing meals from exceeding a meal plan’s budget
