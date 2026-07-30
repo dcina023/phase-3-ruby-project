@@ -3,23 +3,25 @@ class CLI
     meal_plan = select_meal_plan(user)
     return unless meal_plan
 
-    loop do
-      choice = @prompt.select("Update meals for #{meal_plan.name}", [
-                                { name: "Add meal", value: :add },
-                                { name: "Edit meal", value: :edit },
-                                { name: "Delete meal", value: :delete },
-                                { name: "Back", value: :back },
-                              ])
+    catch(:back) do
+      loop do
+        choice = @prompt.select("Update meals for #{meal_plan.name}", [
+                                  { name: "Add meal", value: :add },
+                                  { name: "Edit meal", value: :edit },
+                                  { name: "Delete meal", value: :delete },
+                                  { name: "Back", value: :back },
+                                ])
 
-      case choice
-      when :add
-        add_new_meal(meal_plan)
-      when :edit
-        update_meal(meal_plan)
-      when :delete
-        delete_meal(meal_plan)
-      when :back
-        break
+        case choice
+        when :add
+          add_new_meal(meal_plan)
+        when :edit
+          update_meal(meal_plan)
+        when :delete
+          delete_meal(meal_plan)
+        when :back
+          throw :back
+        end
       end
     end
   end
@@ -38,7 +40,7 @@ class CLI
     puts "  -> Meal: #{meal.name} (ID: #{meal.id})"
     puts "     (meal_type: #{meal.meal_type})"
     puts "     (prep_time: #{format_prep_time(meal.prep_time)})"
-    puts "     (estimated_cost: #{meal.estimated_cost})"
+    puts "     (estimated_cost: $#{meal.estimated_cost})"
     puts "     (calories: #{meal.calories})"
     puts "     (prepared: #{meal.prepared})"
     puts "     (favorite: #{meal.favorite})"
@@ -104,14 +106,21 @@ class CLI
   end
 
   def update_meal(meal_plan)
+    if meal_plan.meals.empty?
+      puts "No meals found for this meal plan."
+      throw :back
+    end
+
+    meal = select_meal(meal_plan)
+    return unless meal
+
     catch(:back) do
-      meal = select_meal(meal_plan)
-      return unless meal
+      field = @prompt.select(
+        "Which field do you want to change?",
+        %w[name meal_type prep_time estimated_cost calories prepared favorite back]
+      )
 
-      field = @prompt.select("Which field do you want to change?",
-                             %w[name meal_type prep_time estimated_cost calories prepared favorite back])
-
-      return if field == "back"
+      throw :back if field == "back"
 
       new_value =
         case field
@@ -126,7 +135,7 @@ class CLI
 
           unless meal_plan.can_update_meal_cost?(meal, new_cost)
             display_budget_error(meal_plan, "This update would put the meal plan over budget.")
-            return
+            throw :back
           end
 
           new_cost
@@ -139,8 +148,6 @@ class CLI
       else
         puts "Update failed: #{meal.errors.full_messages.join(', ')}"
       end
-
-      return
     end
 
     puts "\nReturning to the previous menu..."
@@ -149,7 +156,7 @@ class CLI
   def delete_meal(meal_plan)
     if meal_plan.meals.empty?
       puts "\nYou don't have any meals to delete"
-      return
+      throw :back
     end
 
     choices = meal_plan.meals.map do |meal|

@@ -1,4 +1,4 @@
-class Main
+class CLI
   def meal_plan_menu(user)
     loop do
       choice = @prompt.select("Update meal plans for #{user.name}", [
@@ -53,14 +53,16 @@ class Main
 
     meal_plan = @prompt.select("Select a meal plan:", choices)
 
+    meal_plan
+  end
+
+  def display_selected_meal_plan(meal_plan)
     puts "\nSelected Meal Plan:"
     puts "  -> Meal Plan: #{meal_plan.name}"
     puts "  -> ID: #{meal_plan.id}"
     puts "  -> Week Start: #{meal_plan.week_start}"
     puts "  -> Goal: #{meal_plan.goal}"
-    puts "  -> Budget: #{meal_plan.budget}"
-
-    meal_plan
+    puts "  -> Budget: $#{meal_plan.budget}"
   end
 
   def add_new_meal_plan(user)
@@ -84,21 +86,36 @@ class Main
       else
         puts "Adding meal plan canceled."
       end
+
       return
     end
+
     puts "\nReturning to the previous menu..."
   end
 
   def update_meal_plan(meal_plan)
     catch(:back) do
-      field = @prompt.select("Which field do you want to change?", %w[name week_start goal budget])
+      if meal_plan.meals.empty?
+        puts "There are no meals in this meal plan."
+        throw :back
+      end
+
+      meal = select_meal(meal_plan)
+      throw :back unless meal
+
+      field = @prompt.select(
+        "Which field do you want to change?",
+        %w[name week_start goal budget back]
+      )
+
+      throw :back if field == "back"
 
       new_value =
         case field
         when "name", "goal"
           prompt_required_text("Enter a new value for #{field}")
         when "week_start"
-          prompt_date("Enter a new week start or type back to return to menu")
+          prompt_date("Enter a new week start date")
         when "budget"
           prompt_float("Enter a new value for #{field}")
         end
@@ -108,8 +125,6 @@ class Main
       else
         puts "Update failed: #{meal_plan.errors.full_messages.join(', ')}"
       end
-
-      return
     end
 
     puts "\nReturning to the previous menu..."
