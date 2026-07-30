@@ -193,6 +193,7 @@ GEM
     tsort (0.2.0)
     tty-color (0.6.0)
     tty-cursor (0.7.1)
+    tty-font (0.5.0)
     tty-prompt (0.23.1)
       pastel (~> 0.8)
       tty-reader (~> 0.8)
@@ -222,6 +223,7 @@ DEPENDENCIES
   activerecord (~> 7.1)
   database_cleaner (~> 2.0)
   faker
+  pastel
   pry (~> 0.14.1)
   rake (~> 13.0)
   require_all (~> 3.0)
@@ -229,6 +231,8 @@ DEPENDENCIES
   rubocop
   sqlite3 (~> 1.7)
   standalone_migrations
+  tty-color
+  tty-font
   tty-prompt
 
 BUNDLED WITH

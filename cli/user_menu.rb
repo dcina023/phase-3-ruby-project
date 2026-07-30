@@ -1,24 +1,7 @@
-class Main
+class CLI
   def list_users
     User.all.each do |user|
       puts "#{user.id}. #{user.name}"
-    end
-  end
-
-  def select_user
-    print "Enter a user's name: "
-    user_name = gets.chomp.downcase
-
-    user = User.includes(meal_plans: :meals)
-               .where("LOWER(name) = ?", user_name)
-               .first
-
-    if user
-      puts "\nSelected user: #{user.name} (ID: #{user.id})"
-      user
-    else
-      puts "User not found."
-      nil
     end
   end
 
@@ -49,13 +32,25 @@ class Main
     end
   end
 
+  def select_user
+    print "Enter a user's name: "
+    user_name = gets.chomp.downcase
+
+    user = find_user_by_name(user_name)
+
+    if user
+      display_selected_user(user)
+      user
+    else
+      puts "User not found."
+      nil
+    end
+  end
+
   def add_new_user
-    print "Add a new user:"
-    name = gets.chomp
+    name = prompt_required_text("Add a new user")
 
-    confirmed = @prompt.yes?("Are you sure you want to add '#{name}'?")
-
-    if confirmed
+    if confirm_action("Are you sure you want to add '#{name}'?")
       user = User.create(name: name)
       puts "Success! '#{user.name}' has been created."
     else
@@ -67,18 +62,16 @@ class Main
     print "Enter user's name to remove: "
     user_name = gets.chomp.downcase
 
-    user = User.where("LOWER(name) = ?", user_name).first
+    user = find_user_by_name(user_name)
     if user
-      puts "\nSelected user: #{user.name} (ID: #{user.id})"
+      display_selected_user(user)
       user
     else
       puts "User not found."
-      nil
+      return
     end
 
-    confirmed = @prompt.yes?("Are you absolutely sure you want to delete '#{user}'?")
-
-    if confirmed
+    if confirm_action("Are you absolutely sure you want to delete '#{user.name}'?")
       user.destroy
       puts "Success! '#{user.name}' has been deleted."
     else

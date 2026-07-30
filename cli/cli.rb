@@ -5,20 +5,29 @@ require_relative "user_menu"
 require_relative "meal_plan_menu"
 require_relative "meal_menu"
 require "tty-prompt"
+require "tty-font"
+require "pastel"
 
-class Main
+class CLI
   def initialize
     @prompt = TTY::Prompt.new
+    @font = TTY::Font.new(:standard)
+    @pastel = Pastel.new
   end
 
   def run
-    puts "Welcome to Meal Prep Tracker!"
+
+    print "\e[H\e[2J"
+    puts @pastel.green(@font.write("Meal Prep Tracker"))
+
     main_menu
+  ensure
+    ActiveRecord::Base.connection_pool.disconnect! if ActiveRecord::Base.connected?
   end
 
   def main_menu
     loop do
-      puts "---------------------------- ---------------------------- "
+      puts @pastel.dim("—" * 50)
       choice = @prompt.select("Main Menu", [
                                 { name: "View users", value: :view_users },
                                 { name: "Select user", value: :select_user },
@@ -38,11 +47,11 @@ class Main
       when :delete_user
         delete_user
       when :exit
-        puts "Thank you for using Meal Plan Tracker!"
+        puts @pastel.blue(@font.write("Thank you!"))
         break
       end
     end
   end
 end
 
-Main.new.run
+CLI.new.run

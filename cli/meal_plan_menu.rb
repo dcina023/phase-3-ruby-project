@@ -1,4 +1,4 @@
-class Main
+class CLI
   def meal_plan_menu(user)
     loop do
       choice = @prompt.select("Update meal plans for #{user.name}", [
@@ -98,7 +98,7 @@ class Main
         when "name", "goal"
           prompt_required_text("Enter a new value for #{field}")
         when "week_start"
-          prompt_date("Enter a new week start or type back to return to menu")
+          prompt_date("Enter a new week start (or type back to return to menu)")
         when "budget"
           prompt_float("Enter a new value for #{field}")
         end

@@ -1,4 +1,4 @@
-class Main
+class CLI
   def meal_menu(user)
     meal_plan = select_meal_plan(user)
     return unless meal_plan
@@ -106,12 +106,19 @@ class Main
       when "calories"
         prompt_integer("Enter a new value for #{field}")
       when "estimated_cost"
-        prompt_float("Enter a new value for #{field}")
+        new_cost = prompt_float("Enter a new value for #{field}")
+
+        unless meal_plan.can_update_meal_cost?(meal, new_cost)
+          puts "This update would put the meal plan over budget"
+          puts "Remaining budget: $#{meal_plan.remaining_budget.round(2)}"
+          return
+        end
+        new_cost
       when "prepared", "favorite"
-        prompt_boolean
+        prompt_boolean("#{field.capitalize}?")
       end
 
-    if meal.update(field.to_sym => new_value)
+    if meal.update(field.to_sym => new_value || new_cost)
       puts "Success! Record updated in the database."
     else
       puts "Update failed: #{meal.errors.full_messages.join(', ')}"
