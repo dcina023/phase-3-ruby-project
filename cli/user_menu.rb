@@ -18,7 +18,10 @@ class CLI
       case choice
       when :view_meal_plans
         meal_plan = select_meal_plan(user)
-        display_meals(meal_plan) if meal_plan
+        if meal_plan
+          display_selected_meal_plan(meal_plan)
+          display_meals(meal_plan)
+        end
       when :meal_plan_summary
         meal_plan = select_meal_plan(user)
         display_meal_plan_summary(meal_plan) if meal_plan
