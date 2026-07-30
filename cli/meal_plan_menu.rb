@@ -29,7 +29,7 @@ class CLI
     puts "Estimated Cost: $#{meal_plan.total_estimated_cost}"
     puts "Remaining Budget: $#{meal_plan.remaining_budget}"
 
-    favorite_meals = meal_plan.meals.where(favorite: true)
+   favorite_meals(meal_plan)
 
     puts "\nFavorite Meals:"
     if favorite_meals.any?
