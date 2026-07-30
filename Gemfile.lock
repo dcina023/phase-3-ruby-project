@@ -231,7 +231,6 @@ DEPENDENCIES
   rubocop
   sqlite3 (~> 1.7)
   standalone_migrations
-  tty-color
   tty-font
   tty-prompt
 
