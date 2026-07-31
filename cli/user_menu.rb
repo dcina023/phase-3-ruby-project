@@ -36,10 +36,13 @@ class CLI
   end
 
   def select_user
-    print "Enter a user's name: "
-    user_name = gets.chomp.downcase
+    print "Select a user "
 
-    user = find_user_by_name(user_name)
+    choice = @prompt.select("User Selection", User.all.map do |user|
+      { name: "#{user.name}", value: "#{user.id}" }
+    end)
+
+    user = User.find(choice)
 
     if user
       display_selected_user(user)
