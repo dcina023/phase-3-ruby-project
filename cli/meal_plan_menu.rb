@@ -100,9 +100,6 @@ class CLI
         throw :back
       end
 
-      meal = select_meal(meal_plan)
-      throw :back unless meal
-
       field = @prompt.select(
         "Which field do you want to change?",
         %w[name week_start goal budget back]
